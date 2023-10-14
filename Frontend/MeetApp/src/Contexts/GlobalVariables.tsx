@@ -1,11 +1,12 @@
 import { JSX, createContext, createSignal, onCleanup } from "solid-js";
+import { DateYMD } from "~/utils/DateUtils";
 
 export const GlobalVariablesContext = createContext<
   | {
       monthDifference: () => number;
       setMonthDifference: (color: number) => void;
-      selectedDays: () => Map<number, Set<number>>;
-      setSelectedDays: (days: (prevSelected: Map<number, Set<number>>) => Map<number, Set<number>>) => void;
+      selectedDays: () => Set<DateYMD>;
+      setSelectedDays: (days: (prevSelected: Set<DateYMD>) => Set<DateYMD>) => void;
     }
 >();
 
@@ -20,7 +21,7 @@ export function GlobalVariablesProvider(props: {
     | undefined;
 }) {
   const [monthDifference, setMonthDifference] = createSignal(0);
-  const [selectedDays, setSelectedDays] = createSignal<Map<number, Set<number>>>(new Map<number, Set<number>>([[0, new Set()]]));
+  const [selectedDays, setSelectedDays] = createSignal<Set<DateYMD>>(new Set());
 
   // Clean up when the component unmounts
   onCleanup(() => {
