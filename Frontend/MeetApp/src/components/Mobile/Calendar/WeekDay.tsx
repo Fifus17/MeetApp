@@ -1,9 +1,9 @@
 import { JSX, useContext } from "solid-js";
-import { ConfigContext } from "~/configuration/ConfigContext";
+import { ConfigContext } from "~/Contexts/ConfigContext";
+import { checkCurrentWeekDay } from "~/utils/DateUtils";
 
 interface WeekDayProps {
   dayName: string;
-  isSelected: boolean; // might be changed to accessor for signal
 }
 
 const WeekDay = (props: WeekDayProps): JSX.Element => {
@@ -12,7 +12,7 @@ const WeekDay = (props: WeekDayProps): JSX.Element => {
   return (
     <div
       class={`p-1 font-semibold rounded-lg text-sm h-min flex justify-center mt-auto ${
-        props.isSelected
+        checkCurrentWeekDay(props.dayName)
           ? `text-white bg-${configContext!.currentColor()}`
           : "text-text-secondary"
       }`}

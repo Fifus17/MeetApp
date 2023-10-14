@@ -3,7 +3,6 @@ import WeekDay from "~/components/Mobile/Calendar/WeekDay"; // Import the WeekDa
 export default function Home() {
   return (
     <main>
-      <WeekDay dayName="Mon" isSelected={true}/>
     </main>
   );
 }

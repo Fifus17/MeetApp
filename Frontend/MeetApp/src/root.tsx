@@ -14,7 +14,8 @@ import {
 } from "solid-start";
 import Main from "./components/Main/Main";
 import "./root.css";
-import { ConfigProvider } from "./configuration/ConfigContext";
+import { ConfigProvider } from "./Contexts/ConfigContext";
+import { GlobalVariablesProvider } from "./Contexts/GlobalVariables";
 
 export default function Root() {
   return (
@@ -28,7 +29,9 @@ export default function Root() {
         <Suspense>
           <ErrorBoundary>
             <ConfigProvider>
-              <Main/>
+              <GlobalVariablesProvider>
+                <Main />
+              </GlobalVariablesProvider>
             </ConfigProvider>
           </ErrorBoundary>
         </Suspense>

@@ -7,7 +7,7 @@ const Main = (): JSX.Element => {
   return (
     <div>
       <MobileHeader />
-      <Calendar />
+      <Calendar/>
     </div>
   );
 };

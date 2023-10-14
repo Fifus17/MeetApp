@@ -1,49 +1,73 @@
-import { JSX, createSignal } from "solid-js";
+import { For, JSX, createSignal, useContext } from "solid-js";
 import CalendarCell from "./CalendarCell";
 import WeekDay from "./WeekDay";
+import { generateCalendar, shortWeekDays } from "~/utils/DateUtils";
+import MonthCarousel from "./MonthCarousel";
+import { GlobalVariablesContext } from "~/Contexts/GlobalVariables";
 
-interface CalendarProps {
-  // pass: number
-}
+const Calendar = (): JSX.Element => {
+  const globalVariables = useContext(GlobalVariablesContext);
+  const [selectedDays, setSelectedDays] = createSignal(new Set<number>());
 
-const Calendar = (props: CalendarProps): JSX.Element => {
-  const [selectedDays, setSelectedDays] = createSignal<Set<number>>(new Set());
+  const handleDayClick = (id: number) => {
 
-  const handleDayClick = (day: number) => {
     setSelectedDays((prevSelected) => {
-      const newSelected = new Set(prevSelected);
-      if (newSelected.has(day)) {
-        newSelected.delete(day); // Deselect the day
+      let newSelected = new Set(prevSelected);
+      if (newSelected.has(id)) {
+        newSelected.delete(id);
       } else {
-        newSelected.add(day); // Select the day
+        newSelected.add(id);
       }
       return newSelected;
     });
+
+    globalVariables?.setSelectedDays((prevSelected) => {
+        let newSelected = new Map(prevSelected);
+        if (newSelected.has(globalVariables?.monthDifference()!)) {
+            newSelected.get(globalVariables?.monthDifference()!)!.add(id);
+        } else {
+            newSelected.set(globalVariables?.monthDifference()!, new Set([id]));
+        }
+        return newSelected;
+        });
+
+        console.log(globalVariables?.selectedDays());
+  };
+
+  const handleMonthClick = (direction: number) => {
+    globalVariables?.setMonthDifference(
+      globalVariables?.monthDifference()! + direction
+    );
+    
+    if (globalVariables!.selectedDays().has(globalVariables?.monthDifference()!)) {
+        setSelectedDays(globalVariables!.selectedDays().get(globalVariables?.monthDifference()!)!);
+    } else {
+        globalVariables!.setSelectedDays((prevSelected) => {
+            let newSelected = new Map(prevSelected);
+            newSelected.set(globalVariables?.monthDifference()!, new Set());
+            return newSelected;
+        });
+        setSelectedDays(globalVariables!.selectedDays().get(globalVariables?.monthDifference()!)!);
+    }
   };
 
   return (
     <div>
-      {/* <CalendarWeekHeader /> */}
+      <MonthCarousel changeSelected={handleMonthClick}/>
       <div class="grid grid-cols-7 grid-rows-6 gap-3 p-4">
-        {/* Create the first row with WeekDay components */}
-        <WeekDay dayName="Mon" isSelected={true} />
-        <WeekDay dayName="Tue" isSelected={false} />
-        <WeekDay dayName="Wed" isSelected={false} />
-        <WeekDay dayName="Thu" isSelected={false} />
-        <WeekDay dayName="Fri" isSelected={false} />
-        <WeekDay dayName="Sat" isSelected={false} />
-        <WeekDay dayName="Sun" isSelected={false} />
+        <For each={shortWeekDays}>
+            {(day) => (
+                <WeekDay dayName={day}/>
+            )}
+        </For>
 
-        {/* Create a grid of CalendarCells for the remaining rows */}
-        {Array.from({ length: 35 }).map((_, dayOfMonth) => (
-          <CalendarCell
-            dayOfMonth={dayOfMonth + 1}
-            isTheMostRight={dayOfMonth % 7 == 6}
-            selectedDays={selectedDays}
-            onDayClick={handleDayClick}
-          />
-        ))}
+        <For each={generateCalendar(globalVariables?.monthDifference())}>
+          {(day) => (
+            <CalendarCell calendarDay={day} onDayClick={handleDayClick} selectedDays={selectedDays}/>
+          )}
+        </For>
       </div>
+      <button>Save</button>
     </div>
   );
 };
