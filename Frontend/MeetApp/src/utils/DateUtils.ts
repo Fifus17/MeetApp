@@ -55,11 +55,9 @@ export const checkCurrentWeekDay = (day: string): boolean => {
   return day == daysOfWeek[dayOfWeek];
 };
 
-const getNoDaysInMonth = (monthDifference: number = 0): number => {
-  const currentDate = new Date();
-  const month = ((currentDate.getMonth() + monthDifference) % 12 + 12) % 12;
-  const year = currentDate.getFullYear() + Math.floor((currentDate.getMonth() + monthDifference) / 12);
-  const lastDayOfMonth = new Date(year, month + 1, 0);
+const getNoDaysInMonth = (date: DateYMD): number => {
+  const nextMonth = getOtherMonth(date, 1);
+  const lastDayOfMonth = new Date(nextMonth.year, nextMonth.month, 0);
   const daysInMonth = lastDayOfMonth.getDate();
   return daysInMonth;
 };
@@ -70,72 +68,51 @@ const getNoDaysInMonthDateYMD = (date: DateYMD): number => {
   return daysInMonth;
 };
 
-const getFirstWeekDayNumInMonth = (monthDifference: number = 0): number => {
-  const currentDate = new Date();
-  const year = currentDate.getFullYear() + Math.floor((currentDate.getMonth() + monthDifference) / 12);
-  const month = ((currentDate.getMonth() + monthDifference) % 12 + 12) % 12;
-  const firstDayOfMonth = new Date(year, month, 1);
-
-  return firstDayOfMonth.getDay();
+const getFirstWeekDayNumInMonth = (date: DateYMD): number => {
+  return new Date(date.year, date.month, 1).getDay();
 };
 
 const getNLastDaysNumbersInMonth = (
   n: number,
-  monthDifference: number = 0
+  date: DateYMD
 ): calendarDay[] => {
-  const daysInMonth = getNoDaysInMonth(monthDifference);
+  const daysInMonth = getNoDaysInMonth(date);
   const lastDays = [];
 
-  const currentDate = new Date();
-  const month = ((currentDate.getMonth() + monthDifference) % 12 + 12) % 12;
-  const year = currentDate.getFullYear() + Math.floor((currentDate.getMonth() + monthDifference) / 12);
-
   for (let i = Math.max(1, daysInMonth - n + 1); i <= daysInMonth; i++)
-    lastDays.push({ id: lastDays.length, otherMonth: true , date: {year: year, month: month, day: i}});
+    lastDays.push({ id: lastDays.length, otherMonth: true , date: {year: date.year, month: date.month, day: i}});
 
   return lastDays;
 };
 
 export const generateCalendar = (
-  monthDifference: number = 0
+  date: DateYMD
 ): calendarDay[] => {
-  const daysInMonth = getNoDaysInMonth(monthDifference);
-  const firstDay = getFirstWeekDayNumInMonth(monthDifference);
-
-
-  // to be reworked to use DateYMD, old approach below
-  const currentDate = new Date();
-  const month = ((currentDate.getMonth() + monthDifference) % 12 + 12) % 12;
-  const nextMonth = ((currentDate.getMonth() + monthDifference + 1) % 12 + 12) % 12;
-  const year = currentDate.getFullYear() + Math.floor((currentDate.getMonth() + monthDifference) / 12);
-  const nextYear = currentDate.getFullYear() + Math.floor((currentDate.getMonth() + monthDifference + 1) / 12);
-
+  const daysInMonth = getNoDaysInMonth(date);
+  const firstDay = getFirstWeekDayNumInMonth(date);
 
   // Get days from previous month
   const calendar = getNLastDaysNumbersInMonth(
     Math.max((firstDay + 6) % 7, 0),
-    monthDifference-1
+    getOtherMonth(date, -1)
   );
 
   // Add the days of the current month
   for (let i = 1; i <= daysInMonth; i++) {
-    calendar.push({ id: calendar.length, otherMonth: false, date: {year: year, month: month, day: i}});
+    calendar.push({ id: calendar.length, otherMonth: false, date: {year: date.year, month: date.month, day: i}});
   }
 
   // Calculate the number of days to add to the end of the array to reach the first days of the next month
-  const remainingSlots =
-    calendar.length > 35 ? 7 * 6 - calendar.length : 7 * 5 - calendar.length;
+  const remainingSlots = calendar.length > 35 ? 7 * 6 - calendar.length : 7 * 5 - calendar.length;
+  const nextMonth: DateYMD = getOtherMonth(date, 1);
   for (let i = 1; i <= remainingSlots; i++)
-    calendar.push({ id: calendar.length, otherMonth: true, date: {year: nextYear, month: nextMonth, day: i}});
+    calendar.push({ id: calendar.length, otherMonth: true, date: {year: nextMonth.year, month: nextMonth.month, day: i}});
 
   return calendar;
 };
 
-export const getMonthName = (monthDifference: number = 0): string => {
-  const currentDate = new Date();
-  const month = ((currentDate.getMonth() + monthDifference) % 12 + 12) % 12;
-
-  return fullMonths[month];
+export const getMonthName = (date: DateYMD): string => {
+  return fullMonths[date.month];
 };
 
 export const getNextDay = (date: DateYMD): DateYMD => {
@@ -147,6 +124,13 @@ export const getNextDay = (date: DateYMD): DateYMD => {
   const year = isNextYear ? date.year + 1 : date.year;
 
   return { year: year, month: month, day: day };
+}
+
+export const getOtherMonth = (date: DateYMD, monthDifference: number): DateYMD => {
+  const year = date.month + monthDifference > 11 ? date.year + 1 : (date.month + monthDifference < 0 ? date.year - 1 : date.year);
+  const month = ((date.month + monthDifference) % 12 + 12) % 12;
+
+  return { year: year, month: month, day: date.day };
 }
 
 export const getDateKey = (date: DateYMD): string => {

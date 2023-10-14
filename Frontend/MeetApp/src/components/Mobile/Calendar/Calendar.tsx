@@ -1,7 +1,7 @@
 import { For, JSX, createSignal, useContext } from "solid-js";
 import CalendarCell from "./CalendarCell";
 import WeekDay from "./WeekDay";
-import { DateYMD, generateCalendar, getDateKey, shortWeekDays } from "~/utils/DateUtils";
+import { DateYMD, generateCalendar, getDateKey, getOtherMonth, shortWeekDays } from "~/utils/DateUtils";
 import MonthCarousel from "./MonthCarousel";
 import { GlobalVariablesContext } from "~/Contexts/GlobalVariables";
 
@@ -36,7 +36,7 @@ const Calendar = (): JSX.Element => {
 
   const handleMonthClick = (direction: number) => {
     globalVariables?.setMonthDifference(
-      globalVariables?.monthDifference()! + direction
+      getOtherMonth(globalVariables?.monthDifference()!, direction)
     );
   };
 
@@ -50,13 +50,13 @@ const Calendar = (): JSX.Element => {
             )}
         </For>
 
-        <For each={generateCalendar(globalVariables?.monthDifference())}>
+        <For each={generateCalendar(globalVariables!.monthDifference())}>
           {(day) => (
             <CalendarCell calendarDay={day} onDayClick={handleDayClick} selectedDays={selectedDays}/>
           )}
         </For>
       </div>
-      <button>Save</button>
+      {/* <button>Save</button> */}
     </div>
   );
 };

@@ -31,7 +31,7 @@ const CalendarCell = (props: CalendarCellProps): JSX.Element => {
             : props.calendarDay.otherMonth
             ? "text-text-secondary"
             : "text-text-dark"
-        }`}
+        } font-semibold`}
         onClick={() => props.onDayClick(date)}
       >
         {props.calendarDay.date.day}
