@@ -4,8 +4,12 @@ import { DateYMD } from "~/utils/DateUtils";
 export const GlobalVariablesContext = createContext<{
   monthDifference: () => DateYMD;
   setMonthDifference: (date: DateYMD) => void;
-  selectedDays: () => Set<DateYMD>;
-  setSelectedDays: (days: (prevSelected: Set<DateYMD>) => Set<DateYMD>) => void;
+  selectedDays: () => Set<string>;
+  setSelectedDays: (days: (prevSelected: Set<string>) => Set<string>) => void;
+  selectMode: () => boolean;
+  setSelectMode: (mode: boolean) => void;
+  inspectedDay: () => DateYMD;
+  setInspectedDay: (date: DateYMD) => void;
 }>();
 
 export function GlobalVariablesProvider(props: {
@@ -22,12 +26,18 @@ export function GlobalVariablesProvider(props: {
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
   const day = currentDate.getDate();
+
   const [monthDifference, setMonthDifference] = createSignal({
     year: year,
     month: month,
     day: day,
   });
-  const [selectedDays, setSelectedDays] = createSignal<Set<DateYMD>>(new Set());
+
+  const [selectedDays, setSelectedDays] = createSignal<Set<string>>(new Set());
+
+  const [selectMode, setSelectMode] = createSignal(false);
+
+  const [inspectedDay, setInspectedDay] = createSignal<DateYMD>({year: 9999, month: 99, day: 99});
 
   // Clean up when the component unmounts
   onCleanup(() => {
@@ -41,6 +51,10 @@ export function GlobalVariablesProvider(props: {
         setMonthDifference,
         selectedDays,
         setSelectedDays,
+        selectMode,
+        setSelectMode,
+        inspectedDay,
+        setInspectedDay,
       }}
     >
       {props.children}

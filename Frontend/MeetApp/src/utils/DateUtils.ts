@@ -11,6 +11,10 @@ export interface DateYMD {
   day: number;
 }
 
+export const compareDates = (date1: DateYMD, date2: DateYMD): boolean => {
+  return date1.year == date2.year && date1.month == date2.month && date1.day == date2.day;
+}
+
 export const fullMonths = [
   "January",
   "February",

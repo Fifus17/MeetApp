@@ -8,6 +8,16 @@ const Main = (): JSX.Element => {
     <div>
       <MobileHeader />
       <Calendar/>
+      <div class="bg-rp-purple"></div>
+      <div class="bg-rp-light-pink"></div>
+      <div class="bg-rp-light-blue"></div>
+      <div class="bg-rp-dark-blue"></div>
+      <div class="bg-rp-dark-pink"></div>
+      <div class="bg-rp-orange"></div>
+      <div class="bg-rp-yellow"></div>
+      <div class="bg-rp-green"></div>
+      <div class="bg-rp-sea-green"></div>
+      <div class="bg-rp-aqua"></div>
     </div>
   );
 };
