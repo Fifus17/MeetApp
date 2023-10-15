@@ -1,0 +1,15 @@
+export enum Color { // might need to find some way to get these from tailwind config
+  "rp-yellow" = "rp-yellow",
+  "rp-orange" = "rp-orange",
+  "rp-light-pink" = "rp-light-pink",
+  "rp-dark-pink" = "rp-dark-pink",
+  "rp-purple" = "rp-purple",
+  "rp-dark-blue" = "rp-dark-blue",
+  "rp-aqua" = "rp-aqua",
+  "rp-light-blue" = "rp-light-blue",
+  "rp-sea-green" = "rp-sea-green",
+  "rp-green" = "rp-green",
+  "text-dark" = "text-dark",
+  "text-light" = "text-light",
+  "text-secondary" = "text-secondary",
+}

@@ -1,9 +1,10 @@
 import { JSX, createContext, createSignal, onCleanup } from 'solid-js';
+import { Color } from '~/utils/ColorsUtils';
 
-export const ConfigContext = createContext<{ currentColor: () => string, setCurrentColor: (color: string) => void } | undefined>();
+export const ConfigContext = createContext<{ currentColor: () => Color, setCurrentColor: (color: Color) => void } | undefined>();
 
 export function ConfigProvider(props: { children: number | boolean | Node | JSX.ArrayElement | (string & {}) | null | undefined; }) {
-  const [currentColor, setCurrentColor] = createSignal("rp-green");
+  const [currentColor, setCurrentColor] = createSignal(Color["rp-green"]);
 
   // Clean up when the component unmounts
   onCleanup(() => {

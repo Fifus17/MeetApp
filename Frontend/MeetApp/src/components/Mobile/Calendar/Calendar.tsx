@@ -12,10 +12,10 @@ import {
 import MonthCarousel from "./MonthCarousel";
 import { GlobalVariablesContext } from "~/Contexts/GlobalVariables";
 import { ConfigContext } from "~/Contexts/ConfigContext";
+import EditCalendarButton from "./EditCalendarButton";
 
 const Calendar = (): JSX.Element => {
   const globalVariables = useContext(GlobalVariablesContext);
-  const config = useContext(ConfigContext);
   const [selectedDays, setSelectedDays] = createSignal(new Set<string>());
 
   const handleDayClick = (date: DateYMD) => {
@@ -44,8 +44,9 @@ const Calendar = (): JSX.Element => {
         return newSelected;
       });
     } else {
-        if (compareDates(globalVariables!.inspectedDay(), date)) globalVariables!.setInspectedDay({year: 9999, month: 99, day: 99});
-        else globalVariables!.setInspectedDay(date);
+      if (compareDates(globalVariables!.inspectedDay(), date))
+        globalVariables!.setInspectedDay({ year: 9999, month: 99, day: 99 });
+      else globalVariables!.setInspectedDay(date);
     }
   };
 
@@ -58,7 +59,7 @@ const Calendar = (): JSX.Element => {
   return (
     <div>
       <MonthCarousel changeSelected={handleMonthClick} />
-      <div class="h-2"></div>
+      <div class="h-4"></div>
       <div class="grid grid-cols-7 grid-rows-6 gap-2 p-4">
         <For each={shortWeekDays}>{(day) => <WeekDay dayName={day} />}</For>
 
@@ -72,14 +73,10 @@ const Calendar = (): JSX.Element => {
           )}
         </For>
       </div>
-      <button
-        class={`rounded-lg w-20 h-10 bg-${config!.currentColor()} text-text-light`}
-        onClick={() =>
-          globalVariables?.setSelectMode(!globalVariables!.selectMode())
-        }
-      >
-        {globalVariables!.selectMode() ? "Save" : "Select"}
-      </button>
+      <div class="w-full flex justify-center">
+        <EditCalendarButton />
+      </div>
+      <div class="h-4"></div>
     </div>
   );
 };
